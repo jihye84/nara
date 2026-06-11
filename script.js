@@ -1,8 +1,8 @@
-// 전역 변수 및 지도/글로브 초기화 설정
+// 전역 변수 및 초기화 설정
 let globe;
 const container = document.getElementById('globeViz');
 
-// CORS 문제를 해결하기 위해 기본 URL 외에 프록시 주소를 활용할 수 있도록 설정
+// CORS 우회용 프록시 및 API 설정
 const BASE_API_URL = 'https://restcountries.com/v3.1/alpha/';
 const PROXY_URL = 'https://api.allorigins.win/raw?url='; 
 
@@ -13,21 +13,25 @@ function initGlobe() {
             return;
         }
 
-        // [수정] 새까만 공 대신 맑고 산뜻한 파란색 바다 이미지를 덮어씌웁니다.
+        // [완벽 복구] 칙칙한 흑백 이미지를 없애고, 아이들이 좋아하는 파스텔톤 컬러로 직접 칠합니다!
         globe = Globe()(container)
-            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
-            .backgroundColor('#F1F2F6') // 우주 배경 대신 CSS의 연한 회백색 배경 적용
+            .globeColor('#C8E6FF') // 맑고 예쁜 하늘색 바다
+            .backgroundColor('#F1F2F6') // style.css의 배경색과 통일
             .showAtmosphere(true)
-            .atmosphereColor('#4ECDC4') // 대기권 후광을 산뜻한 민트색으로
+            .atmosphereColor('#4ECDC4') // 산뜻한 민트색 대기권 후광
             .atmosphereAltitude(0.15)
             
-            // 땅(국가) 색상 설정: CSS 파스텔톤 컬러 적극 활용
-            .polygonCapColor(() => '#FFE66D') // 기본 땅 색상 (노란색)
-            .polygonSideColor(() => '#FF6B6B') // 땅 측면 두께 색상 (코랄 핑크)
-            .polygonStrokeColor(() => '#2F3542') // 국경선 색상 (진한 회색)
-            .polygonAltitude(0.01) // 땅을 아주 살짝 입체적으로 튀어나오게 설정
+            // 땅(국가) 색상 및 두께 설정
+            .polygonCapColor(() => '#FFE66D') // 기본 땅 색상 (따뜻한 노란색)
+            .polygonSideColor(() => '#FF6B6B') // 땅 측면 두께 (코랄 핑크)
+            .polygonStrokeColor(() => '#2F3542') // 국경선 색상
+            .polygonAltitude(0.015) // 땅을 살짝 도톰하게 입체적으로
             
-            // 클릭 이벤트
+            // [추가] 마우스를 올렸을 때 색상이 변하는 호버 효과! (아이들 호기심 유발)
+            .polygonHoverColor(() => '#FF9F43') 
+            .polygonsTransitionDuration(300) // 부드러운 애니메이션
+            
+            // 클릭 이벤트 연결
             .polygonClick((polygon) => {
                 const countryCode = polygon.properties.ISO_A3 || polygon.properties.iso_a3 || polygon.properties.ADM0_A3;
                 if (countryCode && countryCode !== '-99') {
@@ -35,20 +39,25 @@ function initGlobe() {
                 }
             });
 
-        // 🚨 [수정] 파일이 누락되지 않는 가장 안정적인 GitHub CDN 주소로 데이터를 가져옵니다.
-        fetch('https://cdn.jsdelivr.net/gh/vasturiano/globe.gl@master/example/datasets/ne_110m_admin_0_countries.geojson')
+        // 🚨 [핵심 해결] 절대 끊기지 않는 가장 안정적인 깃헙 원본 데이터 주소로 교체했습니다.
+        // 이 데이터가 로드되어야 노란색 땅이 생기고 클릭이 가능해집니다!
+        fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
             .then(res => res.json())
             .then(countries => {
-                globe.polygonsData(countries.features); // 이제 까만 바다 위에 노란 땅들이 예쁘게 올라갑니다!
+                globe.polygonsData(countries.features); // 드디어 예쁜 나라들이 지구본 위에 찰싹 붙습니다!
             })
-            .catch(err => console.error("국가 형태 데이터를 불러오는 데 실패했습니다:", err));
+            .catch(err => {
+                console.error("국가 형태 데이터를 불러오는 데 실패했습니다:", err);
+                // 화면에 에러를 띄워 문제 파악을 돕습니다.
+                displayErrorMessage("지도를 불러오는 중");
+            });
 
     } catch (error) {
         console.error("화면 초기화 중 오류 발생:", error);
     }
 }
 
-// 브라우저가 준비된 후 안전하게 지구본 생성
+// 브라우저가 완벽히 준비된 후 안전하게 지구본 생성
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGlobe);
 } else {
@@ -56,7 +65,7 @@ if (document.readyState === 'loading') {
 }
 
 /**
- * CORS 차단 정책을 프록시로 안전하게 우회하여 국가 정보를 가져오는 핵심 함수
+ * 프록시로 안전하게 우회하여 국가 상세 정보를 가져오는 통신 함수
  */
 async function handleLocationClick(countryCode) {
     if (!countryCode) return;
@@ -64,8 +73,6 @@ async function handleLocationClick(countryCode) {
     const fields = '?fields=name,capital,capitalInfo,flags,translations';
     const primaryUrl = `${BASE_API_URL}${countryCode}${fields}`;
     const backupUrl = `${PROXY_URL}${encodeURIComponent(primaryUrl)}`;
-
-    console.log(`국가 데이터 요청 시작: ${countryCode}`);
 
     try {
         let response;
@@ -76,7 +83,6 @@ async function handleLocationClick(countryCode) {
             });
             if (!response.ok) throw new Error('CORS 차단 또는 API 에러 발생');
         } catch (corsError) {
-            console.warn("CORS 제한 우회 프록시 서버 가동 중...");
             response = await fetch(backupUrl);
         }
 
@@ -94,15 +100,11 @@ async function handleLocationClick(countryCode) {
 }
 
 /**
- * 레이아웃에 맞춰 정보를 렌더링하는 함수
+ * 지혜님의 style.css 레이아웃에 맞춰 정보를 예쁘게 렌더링하는 함수
  */
 function renderCountryInfo(data) {
     const targetContainer = document.getElementById('info-panel');
-    
-    if (!targetContainer) {
-        console.error("#info-panel 요소를 찾을 수 없습니다.");
-        return;
-    }
+    if (!targetContainer) return;
 
     const countryName = data.translations?.kor?.common || data.name?.common || '정보 없음';
     const capital = data.capital && data.capital[0] ? data.capital[0] : '정보 없음';
@@ -146,7 +148,7 @@ function displayErrorMessage(countryCode) {
         targetContainer.innerHTML = `
             <h1 id="country-name" style="font-size: 1.8rem; color: var(--primary-color);">⚠️ 연결 실패</h1>
             <div class="capital-container" style="font-size: 1.1rem; text-align: center; margin: 15px 0;">
-                <span>${countryCode} 정보를 불러오지 못했어요.<br>잠시 후 다시 시도해 주세요!</span>
+                <span>정보를 불러오지 못했어요.<br>잠시 후 다시 시도해 주세요!</span>
             </div>
             <button id="close-btn" onclick="closeInfoPanel()">확인</button>
         `;
