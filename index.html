@@ -3,34 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>세계 국가 정보 지도</title>
-
+    <title>세계 지도 공사 중!</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body {
+            background-color: #F1F2F6; /* 기존 지혜님 배경색 */
+            font-family: 'Jua', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .construction-card {
+            background-color: white;
+            padding: 40px 50px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 5px solid #FF6B6B; /* 기존 지혜님 포인트 컬러 */
+            max-width: 80%;
+        }
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        .emoji-container {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            /* 귀엽게 위아래로 둥실둥실 움직이는 애니메이션 */
+            animation: bounce 2s infinite ease-in-out;
+        }
 
-    <script src="//unpkg.com/three"></script>
-    <script src="//unpkg.com/three-globe"></script>
-    <script src="//unpkg.com/globe.gl"></script>
+        h1 {
+            color: #FF6B6B;
+            font-size: 2.5rem;
+            margin: 0 0 15px 0;
+        }
+
+        p.message {
+            font-size: 1.5rem;
+            color: #4ECDC4; /* 기존 지혜님 서브 컬러 */
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+
+        p.sub-message {
+            font-size: 1.2rem;
+            color: #2F3542;
+            margin: 0;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
 </head>
 <body>
-    <div id="welcome-message">
-        <h2>🌍 세계 여행을 떠나볼까요?</h2>
+
+    <div class="construction-card">
+        <div class="emoji-container">🚧🌍👷‍♀️</div>
+        <h1>뚝딱뚝딱 공사 중!</h1>
+        <p class="message">더 재미있는 세계 여행을 위해<br>지도를 예쁘게 고치고 있어요!</p>
+        <p class="sub-message">조금만 기다려 주세요. 금방 돌아올게요! ✨</p>
     </div>
 
-    <button id="mode-toggle">지구본 모드</button>
-    <button id="sound-toggle">소리 켜기</button>
-
-    <div id="map"></div>
-    
-    <div id="globe" class="hidden"></div>
-    
-    <div id="info-panel" class="hidden"></div>
-
-    <script src="script.js" defer></script>
 </body>
 </html>
