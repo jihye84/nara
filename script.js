@@ -13,15 +13,15 @@ function initGlobe() {
             return;
         }
 
-        // [귀여운 디자인 적용] 진지한 우주 사진을 빼고, CSS의 파스텔톤 컬러를 사용한 일러스트 느낌으로 생성
+        // [수정] 새까만 공 대신 맑고 산뜻한 파란색 바다 이미지를 덮어씌웁니다.
         globe = Globe()(container)
+            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-water.png')
             .backgroundColor('#F1F2F6') // 우주 배경 대신 CSS의 연한 회백색 배경 적용
             .showAtmosphere(true)
             .atmosphereColor('#4ECDC4') // 대기권 후광을 산뜻한 민트색으로
             .atmosphereAltitude(0.15)
-            .globeColor('#e6f2ff') // 바다 색상을 아주 연한 파스텔 블루로 설정
             
-            // 땅(국가) 색상 설정: 지혜님의 CSS 컬러 적극 활용
+            // 땅(국가) 색상 설정: CSS 파스텔톤 컬러 적극 활용
             .polygonCapColor(() => '#FFE66D') // 기본 땅 색상 (노란색)
             .polygonSideColor(() => '#FF6B6B') // 땅 측면 두께 색상 (코랄 핑크)
             .polygonStrokeColor(() => '#2F3542') // 국경선 색상 (진한 회색)
@@ -29,18 +29,17 @@ function initGlobe() {
             
             // 클릭 이벤트
             .polygonClick((polygon) => {
-                // 클릭한 국가의 ISO 3자리 코드 판별 (데이터 구조에 따라 속성명이 다를 수 있어 여러 개 체크)
                 const countryCode = polygon.properties.ISO_A3 || polygon.properties.iso_a3 || polygon.properties.ADM0_A3;
                 if (countryCode && countryCode !== '-99') {
                     handleLocationClick(countryCode);
                 }
             });
 
-        // 🚨 [핵심 해결] 국가 형태(폴리곤) 데이터를 불러와서 지구본에 입혀야 클릭이 작동합니다!
-        fetch('https://unpkg.com/globe.gl/example/datasets/ne_110m_admin_0_countries.geojson')
+        // 🚨 [수정] 파일이 누락되지 않는 가장 안정적인 GitHub CDN 주소로 데이터를 가져옵니다.
+        fetch('https://cdn.jsdelivr.net/gh/vasturiano/globe.gl@master/example/datasets/ne_110m_admin_0_countries.geojson')
             .then(res => res.json())
             .then(countries => {
-                globe.polygonsData(countries.features); // 드디어 지구본에 나라들이 생깁니다!
+                globe.polygonsData(countries.features); // 이제 까만 바다 위에 노란 땅들이 예쁘게 올라갑니다!
             })
             .catch(err => console.error("국가 형태 데이터를 불러오는 데 실패했습니다:", err));
 
@@ -95,7 +94,7 @@ async function handleLocationClick(countryCode) {
 }
 
 /**
- * 지혜님의 style.css 레이아웃에 맞춰 정보를 렌더링하는 함수
+ * 레이아웃에 맞춰 정보를 렌더링하는 함수
  */
 function renderCountryInfo(data) {
     const targetContainer = document.getElementById('info-panel');
@@ -109,7 +108,6 @@ function renderCountryInfo(data) {
     const capital = data.capital && data.capital[0] ? data.capital[0] : '정보 없음';
     const flagUrl = data.flags?.svg || data.flags?.png || '';
 
-    // style.css의 ID 구조(#country-name, #country-flag, .capital-container) 완벽 적용
     targetContainer.innerHTML = `
         <h1 id="country-name">${countryName}</h1>
         <img id="country-flag" src="${flagUrl}" alt="${countryName} 국기">
