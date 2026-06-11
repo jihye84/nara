@@ -8,36 +8,28 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script src="//unpkg.com/three"></script>
     <script src="//unpkg.com/three-globe"></script>
     <script src="//unpkg.com/globe.gl"></script>
-    
-    <style>
-        #globeViz {
-            height: 100vh;
-            width: 100vw;
-            z-index: 1;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
 </head>
 <body>
     <div id="welcome-message">
         <h2>🌍 세계 여행을 떠나볼까요?</h2>
     </div>
 
-    <button id="mode-toggle">지도 모드</button>
+    <button id="mode-toggle">지구본 모드</button>
     <button id="sound-toggle">소리 켜기</button>
 
-    <div id="globeViz"></div>
+    <div id="map"></div>
     
-    <div id="info-panel" class="hidden">
-        </div>
+    <div id="globe" class="hidden"></div>
+    
+    <div id="info-panel" class="hidden"></div>
 
     <script src="script.js" defer></script>
 </body>
