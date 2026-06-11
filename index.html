@@ -4,56 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>세계 국가 정보 지도</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="//unpkg.com/three"></script>
+    <script src="//unpkg.com/three-globe"></script>
+    <script src="//unpkg.com/globe.gl"></script>
+    
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Malgun Gothic', sans-serif;
-        }
         #globeViz {
-            width: 100vw;
             height: 100vh;
+            width: 100vw;
+            z-index: 1;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 1;
-        }
-        #countryInfo {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 300px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            display: none;
-        }
-        .country-card h2 {
-            margin-top: 0;
-            color: #333;
         }
     </style>
-
-    <!-- [필수] Three.js 핵심 라이브러리를 먼저 로드합니다 -->
-    <script src="//unpkg.com/three"></script>
-    <!-- [필수] Three-globe 라이브러리를 두 번째로 로드합니다 -->
-    <script src="//unpkg.com/three-globe"></script>
-    <!-- [필수] Globe 헬퍼 라이브러리를 세 번째로 로드합니다 -->
-    <script src="//unpkg.com/globe.gl"></script>
 </head>
 <body>
+    <div id="welcome-message">
+        <h2>🌍 세계 여행을 떠나볼까요?</h2>
+    </div>
 
-    <!-- 3D 지구본이 그려질 컨테이너 -->
+    <button id="mode-toggle">지도 모드</button>
+    <button id="sound-toggle">소리 켜기</button>
+
     <div id="globeViz"></div>
+    
+    <div id="info-panel" class="hidden">
+        </div>
 
-    <!-- 국가 정보가 표시될 모달/카드 -->
-    <div id="countryInfo"></div>
-
-    <!-- [수정] 모든 라이브러리와 DOM이 확실히 로드된 후 지혜님의 스크립트가 실행되도록 defer 속성을 부여합니다 -->
     <script src="script.js" defer></script>
 </body>
 </html>
