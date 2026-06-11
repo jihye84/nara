@@ -1,76 +1,55 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>세계 지도 공사 중!</title>
-    
+    <title>세계 세계 탐험대!</title>
+    <!-- Google Fonts for Kid-friendly typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #F1F2F6; /* 기존 지혜님 배경색 */
-            font-family: 'Jua', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        
-        .construction-card {
-            background-color: white;
-            padding: 40px 50px;
-            border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 5px solid #FF6B6B; /* 기존 지혜님 포인트 컬러 */
-            max-width: 80%;
-        }
 
-        .emoji-container {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            /* 귀엽게 위아래로 둥실둥실 움직이는 애니메이션 */
-            animation: bounce 2s infinite ease-in-out;
-        }
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="lib/leaflet.css" />
 
-        h1 {
-            color: #FF6B6B;
-            font-size: 2.5rem;
-            margin: 0 0 15px 0;
-        }
+    <!-- Globe.gl (requires Three.js implicitly via its bundle usually, but globe.gl standalone includes it) -->
+    <script src="lib/globe.gl.js"></script>
 
-        p.message {
-            font-size: 1.5rem;
-            color: #4ECDC4; /* 기존 지혜님 서브 컬러 */
-            margin: 0 0 20px 0;
-            line-height: 1.5;
-        }
-
-        p.sub-message {
-            font-size: 1.2rem;
-            color: #2F3542;
-            margin: 0;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
 
-    <div class="construction-card">
-        <div class="emoji-container">🚧🌍👷‍♀️</div>
-        <h1>뚝딱뚝딱 공사 중!</h1>
-        <p class="message">더 재미있는 세계 여행을 위해<br>지도를 예쁘게 고치고 있어요!</p>
-        <p class="sub-message">조금만 기다려 주세요. 금방 돌아올게요! ✨</p>
+<body>
+    <button id="mode-toggle">🌍 지구본 모드</button>
+    <button id="sound-toggle">🔊 소리 켜짐</button>
+
+    <div id="map"></div>
+    <div id="globe" class="hidden"></div>
+
+    <div id="info-panel" class="hidden">
+        <h1 id="country-name">나라 이름</h1>
+        <img id="country-flag" src="" alt="국기">
+        <div class="capital-container">
+            <span class="capital-label">수도:</span>
+            <span id="capital-name">수도 이름</span>
+        </div>
+        <button id="close-btn">닫기</button>
     </div>
 
+    <div id="welcome-message">
+        <h2>지도에서 궁금한 나라를 클릭해봐요!</h2>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="lib/leaflet.js"></script>
+
+    <!-- Scripts -->
+    <script src="lib/three-globe.js"></script>
+    <script src="lib/world_geojson.js"></script>
+    <script src="lib/earth_water_base64.js"></script>
+    <script src="countries_data.js"></script>
+    <script src="kr_capitals.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
