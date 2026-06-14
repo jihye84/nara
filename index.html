@@ -5,6 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>세계 세계 탐험대!</title>
+    <!-- In-App Browser Escape Script -->
+    <script>
+        (function () {
+            var userAgent = navigator.userAgent.toLowerCase();
+            var targetUrl = location.href;
+            
+            // 인앱 브라우저 감지 (카카오톡, 페이스북, 인스타그램, 네이버, 라인, 다음)
+            if (userAgent.match(/kakaotalk|facebook|instagram|naver|line|daum/i)) {
+                if (userAgent.match(/android/i)) {
+                    // 안드로이드: 크롬 브라우저로 강제 이동
+                    var scheme = location.protocol.replace(':', '');
+                    var urlWithoutProtocol = targetUrl.replace(new RegExp('^' + location.protocol + '//'), '');
+                    location.href = 'intent://' + urlWithoutProtocol + '#Intent;scheme=' + scheme + ';package=com.android.chrome;end';
+                } else if (userAgent.match(/iphone|ipad|ipod/i)) {
+                    // iOS
+                    if (userAgent.match(/kakaotalk/i)) {
+                        // 아이폰 카카오톡: 외부 브라우저(Safari)로 열기 스키마 사용
+                        location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+                    } else {
+                        // 아이폰 페이스북 등: 자동 전환이 어려워 사용자에게 안내
+                        alert('원활한 지도 화면을 위해 우측 하단(또는 상단)의 [Safari로 열기] 또는 [기본 브라우저로 열기]를 눌러주세요.');
+                    }
+                }
+            }
+        })();
+    </script>
     <!-- Google Fonts for Kid-friendly typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
