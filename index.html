@@ -12,7 +12,7 @@
             var targetUrl = location.href;
             
             // 인앱 브라우저 감지 (카카오톡, 페이스북, 인스타그램, 네이버, 라인, 다음)
-            if (userAgent.match(/kakaotalk|facebook|instagram|naver|line|daum/i)) {
+            if (userAgent.match(/kakaotalk|facebook|fban|fbav|fb_iab|instagram|naver|line|daum/i)) {
                 if (userAgent.match(/android/i)) {
                     // 안드로이드: 크롬 브라우저로 강제 이동
                     var scheme = location.protocol.replace(':', '');
