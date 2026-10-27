@@ -30,7 +30,7 @@ html {
 }
 
 #map {
-    background-color: #aadaff !important; /* Ocean blue fallback if map tiles fail to load */
+    background-color: #aadaff !important; /* 바다색 (타일 서버 없이 배경으로 사용) */
 }
 
 #globe.hidden {

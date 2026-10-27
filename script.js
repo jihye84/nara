@@ -19,13 +19,9 @@ let isSoundOn = true;
 // ----------------------------------------------------
 // 2D MAP SETUP (Leaflet)
 // ----------------------------------------------------
-const map = L.map('map', { zoomControl: false }).setView([20, 0], 2);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 10,
-    minZoom: 2
-}).addTo(map);
+const map = L.map('map', { zoomControl: false, minZoom: 1.5, maxZoom: 8, zoomSnap: 0.5, worldCopyJump: true, maxBounds: [[-85, -400], [85, 400]] }).setView([20, 0], 2);
+// 배경 지도 타일 서버(외부 API) 없이 바다색 배경 + 나라 모양만으로 그립니다.
+map.attributionControl.setPrefix(false);
 
 const capitalIcon = L.divIcon({
     className: 'capital-icon-container',
