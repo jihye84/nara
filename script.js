@@ -1,5 +1,7 @@
 let currentMode = 'map'; // 'map' or 'globe'
 let worldData = null;
+let globeFeatures = null;
+let globeReady = false;
 const countryCache = {}; // Cache API responses to save memory and network
 
 // UI Elements
@@ -97,6 +99,7 @@ modeToggleBtn.addEventListener('click', () => {
         mapContainer.classList.add('hidden');
         globeContainer.classList.remove('hidden');
         modeToggleBtn.innerText = '🗺️ 지도 모드';
+        if (!globeReady && globeFeatures) { globe.polygonsData(globeFeatures); globeReady = true; }
 
         // Ensure globe draws correctly after being un-hidden
         globe.width(window.innerWidth).height(window.innerHeight);
@@ -177,11 +180,22 @@ function speakText(text) {
 // DATA FETCHING 
 // ----------------------------------------------------
 try {
-    worldData = worldGeoJsonData;
-
-    // Add ID to each feature for tracking selection across views
+    // 1:50m 정밀 경계 (해안선·국경이 1:110m보다 약 10배 촘촘함). 각 나라 id는 ISO 3글자 코드.
+    worldData = topojson.feature(worldTopo50m, worldTopo50m.objects.countries);
+    // 날짜변경선(180°)을 넘는 러시아 동쪽 끝·피지 섬이 평면 지도에서 화면을 가로지르는 띠로 그려지지 않게 이어 붙임
     worldData.features.forEach(f => {
-        f.id = f.properties.ISO_A3 !== '-99' ? f.properties.ISO_A3 : f.properties.ADM0_A3;
+        const polys = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+        polys.forEach(poly => poly.forEach(ring => {
+            let jumps = 0;
+            for (let i = 1; i < ring.length; i++) if (Math.abs(ring[i][0] - ring[i - 1][0]) > 180) jumps++;
+            if (jumps === 0 || jumps % 2 === 1) return; // 남극처럼 지구를 한 바퀴 도는 고리는 그대로
+            for (let i = 1; i < ring.length; i++) {
+                const d = ring[i][0] - ring[i - 1][0];
+                if (d > 180) ring[i][0] -= 360; else if (d < -180) ring[i][0] += 360;
+            }
+            const minLng = Math.min(...ring.map(c => c[0]));
+            if (minLng < -180) ring.forEach(c => { c[0] += 360; });
+        }));
     });
 
     // Initialize 2D Map layer
@@ -201,7 +215,8 @@ try {
     }).addTo(map);
 
     // Initialize 3D Globe polygons
-    globe.polygonsData(worldData.features);
+    // 지구본은 가벼운 1:110m 경계 사용 (정밀 경계는 3D로 그리기엔 너무 무거움), 처음 지구본을 켤 때 그림
+    globeFeatures = topojson.feature(worldTopo110m, worldTopo110m.objects.countries).features;
 } catch (error) {
     console.error('Error loading GeoJSON:', error);
     alert('지도 데이터를 불러오는데 실패했어요. 새로고침 해주세요!');
